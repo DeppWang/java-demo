@@ -25,7 +25,7 @@ public class LanguageServlet extends HttpServlet {
         String lang = req.getParameter("lang");
         if (LANGUAGES.contains(lang)) {
             Cookie cookie = new Cookie("lang", lang);
-            cookie.setPath("/");
+            cookie.setPath("/"); // 该 Cookie 生效的路径范围, / 代表所有路径均生效
             cookie.setMaxAge(8640000); // 100 days
             resp.addCookie(cookie);
         }

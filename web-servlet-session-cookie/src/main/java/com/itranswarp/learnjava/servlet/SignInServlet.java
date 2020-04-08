@@ -27,8 +27,8 @@ public class SignInServlet extends HttpServlet {
         PrintWriter pw = resp.getWriter();
         pw.write("<h1>Sign In</h1>");
         pw.write("<form action=\"/signin\" method=\"post\">");
-        pw.write("<p>Username: <input name=\"username\"></p>");
-        pw.write("<p>Password: <input name=\"password\" type=\"password\"></p>");
+        pw.write("<p>Username: <input type=\"text\" name=\"username\"></p>");
+        pw.write("<p>Password: <input type=\"text\" name=\"password\" type=\"password\"></p>");
         pw.write("<p><button type=\"submit\">Sign In</button> <a href=\"/\">Cancel</a></p>");
         pw.write("</form>");
         pw.flush();
@@ -41,6 +41,7 @@ public class SignInServlet extends HttpServlet {
         String expectedPassword = users.get(name.toLowerCase());
         if (expectedPassword != null && expectedPassword.equals(password)) {
             req.getSession().setAttribute("user", name);
+            req.getSession().setMaxInactiveInterval(60);
             resp.sendRedirect("/");
         } else {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);

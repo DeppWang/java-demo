@@ -13,41 +13,55 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(urlPatterns = "/")
 public class IndexServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String user = (String) req.getSession().getAttribute("user");
-		String lang = parseLanguageFromCookie(req);
-		resp.setContentType("text/html");
-		resp.setCharacterEncoding("UTF-8");
-		PrintWriter pw = resp.getWriter();
-		if (lang.equals("zh")) {
-			pw.write("<h1>你好, " + (user != null ? user : "Guest") + "</h1>");
-			if (user == null) {
-				pw.write("<p><a href=\"/signin\">登录</a></p>");
-			} else {
-				pw.write("<p><a href=\"/signout\">登出</a></p>");
-			}
-		} else {
-			pw.write("<h1>Welcome, " + (user != null ? user : "Guest") + "</h1>");
-			if (user == null) {
-				pw.write("<p><a href=\"/signin\">Sign In</a></p>");
-			} else {
-				pw.write("<p><a href=\"/signout\">Sign Out</a></p>");
-			}
-		}
-		pw.write("<p><a href=\"/pref?lang=en\">English</a> | <a href=\"/pref?lang=zh\">中文</a>");
-		pw.flush();
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String user = (String) req.getSession().getAttribute("user");
+        String lang = parseLanguageFromCookie(req);
+        resp.setContentType("text/html");
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter pw = resp.getWriter();
+        if (lang.equals("zh")) {
+            pw.write("<h1>你好, " + (user != null ? user : "Guest") + "</h1>");
+            if (user == null) {
+                pw.write("<p><a href=\"/signin\">登录</a></p>");
+            } else {
+                pw.write("<p><a href=\"/signout\">登出</a></p>");
+            }
+        } else {
+            pw.write("<h1>Welcome, " + (user != null ? user : "Guest") + "</h1>");
+            if (user == null) {
+                pw.write("<p><a href=\"/signin\">Sign In</a></p>");
+            } else {
+                pw.write("<p><a href=\"/signout\">Sign Out</a></p>");
+            }
+        }
+        pw.write("<p><a href=\"/pref?lang=en\">English</a> | <a href=\"/pref?lang=zh\">中文</a>");
+        pw.write("<p>JSESSIONID: " + getSessionIdFromCookie(req) + "</p>");
+        pw.flush();
+    }
 
-	private String parseLanguageFromCookie(HttpServletRequest req) {
-		Cookie[] cookies = req.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("lang")) {
-					return cookie.getValue();
-				}
-			}
-		}
-		return "en";
-	}
+    private String parseLanguageFromCookie(HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("lang")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "en";
+    }
+
+    // 重启服务器后，Session 将失效
+    private String getSessionIdFromCookie(HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("JSESSIONID")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "null";
+    }
 }
